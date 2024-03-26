@@ -3,30 +3,48 @@ import pandas as pd
 
 def calculate_demographic_data(print_data=True):
     # Read data from file
-    df = None
+    df = pd.read_csv('boilerplate-demographic-data-analyzer/adult.data.csv')
 
     # How many of each race are represented in this dataset? This should be a Pandas series with race names as the index labels.
-    race_count = None
+    race_count = df.groupby('race')['fnlwgt'].sum()
 
     # What is the average age of men?
-    average_age_men = None
+    average_age_men = df[df['sex']=='Male']['age'].mean()
 
     # What is the percentage of people who have a Bachelor's degree?
-    percentage_bachelors = None
+    total_bachelors = df[df['education'] == 'Bachelors']['fnlwgt'].sum()
+    total_population = df['fnlwgt'].sum()
+    percentage_bachelors = (total_bachelors/total_population) * 100
 
     # What percentage of people with advanced education (`Bachelors`, `Masters`, or `Doctorate`) make more than 50K?
     # What percentage of people without advanced education make more than 50K?
 
     # with and without `Bachelors`, `Masters`, or `Doctorate`
-    higher_education = None
-    lower_education = None
+   
+    
+    filtered_df = df[
+        ((df['education'] == 'Bachelor') |
+        (df['education'] == 'Master') |
+        (df['education'] == 'Doctorate')) & 
+        (df['salary'] == '>50K')
+    ]
+    advance_edu_people = filtered_df['fnlwgt'].sum()
+    total_population = df['fnlwgt'].sum()
+
+    higher_education = df[
+        ((df['education'] == 'Bachelor') |
+        (df['education'] == 'Master') |
+        (df['education'] == 'Doctorate'))
+    ]['fnlgwt'].sum()
+    total_pop = df['fnlwgt'].sum()
+    lower_education = total_pop - higher_education
 
     # percentage with salary >50K
-    higher_education_rich = None
-    lower_education_rich = None
+    higher_education_rich = (advance_edu_people / total_population) * 100
+    lower_education_rich = 100 - higher_education
 
     # What is the minimum number of hours a person works per week (hours-per-week feature)?
-    min_work_hours = None
+    min_work_hours = df['hours-per-week'].min()
 
     # What percentage of the people who work the minimum number of hours per week have a salary of >50K?
     num_min_workers = None
