@@ -31,25 +31,27 @@ def calculate_demographic_data(print_data=True):
     advance_edu_people = filtered_df['fnlwgt'].sum()
     total_population = df['fnlwgt'].sum()
 
-    higher_education = df[
+    higher_edu_pop = df[
         ((df['education'] == 'Bachelor') |
         (df['education'] == 'Master') |
         (df['education'] == 'Doctorate'))
     ]['fnlgwt'].sum()
+    
     total_pop = df['fnlwgt'].sum()
-    lower_education = total_pop - higher_education
+
+    lower_edu_pop = total_pop - higher_edu_pop
 
     # percentage with salary >50K
-    higher_education_rich = (advance_edu_people / total_population) * 100
-    lower_education_rich = 100 - higher_education
+    higher_edu_pop = (advance_edu_people / higher_edu_pop) * 100
+    lower_edu_pop = 100 - higher_edu_pop
 
     # What is the minimum number of hours a person works per week (hours-per-week feature)?
     min_work_hours = df['hours-per-week'].min()
 
     # What percentage of the people who work the minimum number of hours per week have a salary of >50K?
-    num_min_workers = None
+    num_min_workers = df[df['salary'] == '>50K']['hours-per-week'].min()
 
-    rich_percentage = None
+    rich_percentage = (num_min_workers/total_population) * 100
 
     # What country has the highest percentage of people that earn >50K?
     highest_earning_country = None
@@ -64,8 +66,8 @@ def calculate_demographic_data(print_data=True):
         print("Number of each race:\n", race_count) 
         print("Average age of men:", average_age_men)
         print(f"Percentage with Bachelors degrees: {percentage_bachelors}%")
-        print(f"Percentage with higher education that earn >50K: {higher_education_rich}%")
-        print(f"Percentage without higher education that earn >50K: {lower_education_rich}%")
+        print(f"Percentage with higher education that earn >50K: {higher_edu_pop}%")
+        print(f"Percentage without higher education that earn >50K: {lower_edu_pop}%")
         print(f"Min work time: {min_work_hours} hours/week")
         print(f"Percentage of rich among those who work fewest hours: {rich_percentage}%")
         print("Country with highest percentage of rich:", highest_earning_country)
@@ -76,8 +78,8 @@ def calculate_demographic_data(print_data=True):
         'race_count': race_count,
         'average_age_men': average_age_men,
         'percentage_bachelors': percentage_bachelors,
-        'higher_education_rich': higher_education_rich,
-        'lower_education_rich': lower_education_rich,
+        'higher_edu_pop': higher_edu_pop,
+        'lower_edu_pop': lower_edu_pop,
         'min_work_hours': min_work_hours,
         'rich_percentage': rich_percentage,
         'highest_earning_country': highest_earning_country,
